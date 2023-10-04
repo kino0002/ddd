@@ -195,13 +195,12 @@ public class EquipmentManager : MonoBehaviour
             // Remove the item from the slot
             slot.equippedItem = null;
 
-            // If the item had storage space, clear the storage container
+            // Save items to temporary storage before removing the bag
             if (itemToRemove.MaxStorageSpace > 0 && slot.storageContainer != null)
             {
-                tempStorage[itemToRemove] = slot.storageContainer.Items.Select(item => new ItemStack(item, 1)).ToList();
-
+                tempStorage[itemToRemove] = new List<Item>(slot.storageContainer.Items);
+                slot.storageContainer.Items.Clear(); // Clear the items from the bag's storage
             }
-
 
             // Log the final states
             Debug.Log($"After removal: Slot type: {slot.slotType}, Equipped item: {slot.equippedItem}, Storage container: {slot.storageContainer}");
