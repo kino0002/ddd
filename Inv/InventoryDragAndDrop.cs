@@ -126,7 +126,7 @@ public class InventoryDragAndDrop : MonoBehaviour
                     Debug.Log("Dropped item: " + draggedItem.name);
                     if (isDraggingOutside)
                     {
-                        Debug.Log("Item to be dropped: " + itemToBeDropped.itemName);
+                        equipmentManager.SaveItemsBeforeDropping(itemToBeDropped);
 
                         // Before creating a dropped item instance, save the stored items
                         SaveStoredItemsBeforeDropping(itemToBeDropped);

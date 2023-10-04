@@ -218,4 +218,28 @@ public class EquipmentManager : MonoBehaviour
         }
     }
 
+    public void SaveItemsBeforeDropping(EquipmentDefinition itemToBeDropped)
+    {
+        EquipmentSlot slot = equipmentSlots.Find(s => s.equippedItem == itemToBeDropped);
+        if (slot != null && slot.storageContainer != null)
+        {
+            tempStorage[itemToBeDropped] = new List<Item>(slot.storageContainer.Items);
+        }
+    }
+
+    public void LoadItemsAfterPickingUp(EquipmentDefinition pickedUpItem)
+    {
+        if (tempStorage.ContainsKey(pickedUpItem))
+        {
+            EquipmentSlot slot = equipmentSlots.Find(s => s.equippedItem == pickedUpItem);
+            if (slot != null && slot.storageContainer != null)
+            {
+                slot.storageContainer.SetItems(tempStorage[pickedUpItem]);
+                tempStorage.Remove(pickedUpItem);
+            }
+        }
+    }
+
+
+
 }
