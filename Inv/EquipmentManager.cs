@@ -17,6 +17,7 @@ public class EquipmentManager : MonoBehaviour
     private List<EquipmentSlot> equipmentSlots;
 
     public event Action<EquipmentDefinition, EquipmentSlotType> OnEquipmentChanged;
+    public Dictionary<EquipmentDefinition, List<ItemStack>> tempStorage = new Dictionary<EquipmentDefinition, List<ItemStack>>();
 
     private void Awake()
     {
@@ -195,10 +196,12 @@ public class EquipmentManager : MonoBehaviour
             slot.equippedItem = null;
 
             // If the item had storage space, clear the storage container
-            if (itemToRemove.MaxStorageSpace > 0)
+            if (itemToRemove.MaxStorageSpace > 0 && slot.storageContainer != null)
             {
-                slot.storageContainer = null;
+                tempStorage[itemToRemove] = slot.storageContainer.Items.Select(item => new ItemStack(item, 1)).ToList();
+
             }
+
 
             // Log the final states
             Debug.Log($"After removal: Slot type: {slot.slotType}, Equipped item: {slot.equippedItem}, Storage container: {slot.storageContainer}");

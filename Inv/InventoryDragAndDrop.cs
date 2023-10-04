@@ -138,7 +138,12 @@ public class InventoryDragAndDrop : MonoBehaviour
                             // Then remove the item from inventory
                             RemoveItemFromInventory(itemToBeDropped);
                         }
-
+                        if (itemToBeDropped.MaxStorageSpace > 0 && equipmentManager.tempStorage.ContainsKey(itemToBeDropped))
+                        {
+                            List<ItemStack> storedItems = equipmentManager.tempStorage[itemToBeDropped];
+                            equipmentSlot.storageContainer.SetItems(storedItems);
+                            equipmentManager.tempStorage.Remove(itemToBeDropped);
+                        }
                         // Create the dropped item instance
                         itemDropping.CreateDroppedItemInstance(itemToBeDropped, evt.mousePosition);
 
