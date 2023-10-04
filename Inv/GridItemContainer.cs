@@ -146,9 +146,9 @@ public class GridItemContainer
 
     public List<Item> Items => items;
 
-    public void SetItems(List<ItemStack> newItems)
+    public void SetItems(List<Item> newItems)
     {
-        items = newItems.Select(itemStack => itemStack.Item).ToList();
+        this.items = newItems;
     }
 }
 

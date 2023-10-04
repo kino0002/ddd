@@ -17,7 +17,7 @@ public class EquipmentManager : MonoBehaviour
     private List<EquipmentSlot> equipmentSlots;
 
     public event Action<EquipmentDefinition, EquipmentSlotType> OnEquipmentChanged;
-    public Dictionary<EquipmentDefinition, List<ItemStack>> tempStorage = new Dictionary<EquipmentDefinition, List<ItemStack>>();
+    public Dictionary<EquipmentDefinition, List<Item>> tempStorage = new Dictionary<EquipmentDefinition, List<Item>>();
 
     private void Awake()
     {

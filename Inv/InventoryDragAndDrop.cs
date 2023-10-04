@@ -140,7 +140,7 @@ public class InventoryDragAndDrop : MonoBehaviour
                         }
                         if (itemToBeDropped.MaxStorageSpace > 0 && equipmentManager.tempStorage.ContainsKey(itemToBeDropped))
                         {
-                            equipmentSlot.storageContainer.Items = new List<Item>(equipmentManager.tempStorage[itemToBeDropped]);
+                            equipmentSlot.storageContainer.SetItems(new List<Item>(equipmentManager.tempStorage[itemToBeDropped]));
                             equipmentManager.tempStorage.Remove(itemToBeDropped);
                         }
                         // Create the dropped item instance
