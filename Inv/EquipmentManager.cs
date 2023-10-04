@@ -113,7 +113,7 @@ public class EquipmentManager : MonoBehaviour
 
     public bool UnequipItemInstance(EquipmentDefinition equipmentInstance)
     {
-        Debug.Log("Trying to unequip: " + equipmentInstance.itemName);
+        Debug.Log("Trying to unequip: " + equipmentInstance?.itemName);
 
         if (equipmentInstance == null)
         {
@@ -141,6 +141,11 @@ public class EquipmentManager : MonoBehaviour
 
         if (equipmentInstance.MaxStorageSpace > 0)
         {
+            if (slot.storageContainer == null)
+            {
+                Debug.LogError("storageContainer is null.");
+                return false;
+            }
             slot.storageContainer = null;
         }
 
@@ -149,11 +154,14 @@ public class EquipmentManager : MonoBehaviour
         {
             inventoryUI.UpdateStorageDisplay();
         }
+        else
+        {
+            Debug.LogError("InventoryUI is null.");
+        }
 
         Debug.Log("Equipment Slots: " + string.Join(", ", equipmentSlots.Select(s => s.equippedItem?.itemName ?? "null")));
         return true;
     }
-
 
 
     public List<EquipmentSlot> GetStorageEquipments()
@@ -225,20 +233,33 @@ public class EquipmentManager : MonoBehaviour
         {
             tempStorage[itemToBeDropped] = new List<Item>(slot.storageContainer.Items);
         }
+        else
+        {
+            Debug.LogWarning("Either slot or storageContainer is null in SaveItemsBeforeDropping.");
+        }
     }
 
     public void LoadItemsAfterPickingUp(EquipmentDefinition pickedUpItem)
     {
-        if (tempStorage.ContainsKey(pickedUpItem))
+        if (tempStorage.TryGetValue(pickedUpItem, out List<Item> storedItems))
         {
             EquipmentSlot slot = equipmentSlots.Find(s => s.equippedItem == pickedUpItem);
             if (slot != null && slot.storageContainer != null)
             {
-                slot.storageContainer.SetItems(tempStorage[pickedUpItem]);
+                slot.storageContainer.SetItems(storedItems);
                 tempStorage.Remove(pickedUpItem);
             }
+            else
+            {
+                Debug.LogWarning("Either slot or storageContainer is null in LoadItemsAfterPickingUp.");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("No items found in tempStorage for the picked-up item.");
         }
     }
+
 
 
 

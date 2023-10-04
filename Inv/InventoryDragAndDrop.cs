@@ -107,9 +107,9 @@ public class InventoryDragAndDrop : MonoBehaviour
                 EquipmentSlotType slotId = (EquipmentSlotType)currentSlot.userData;
                 EquipmentManager.EquipmentSlot equipmentSlot = equipmentManager.GetEquipmentSlot(slotId);
 
-                if (equipmentSlot == null)
+                if (equipmentSlot == null || equipmentSlot.equippedItem == null)
                 {
-                    Debug.LogError($"equipmentSlot is null for ID: {slotId}");
+                    Debug.LogError($"equipmentSlot or equippedItem is null for ID: {slotId}");
                     return;
                 }
 
@@ -123,25 +123,44 @@ public class InventoryDragAndDrop : MonoBehaviour
 
                 if (draggedItem != null)
                 {
-                    Debug.Log("Dropped item: " + draggedItem.name);
+                    Debug.Log("Entered draggedItem != null block");  // New Debug Line 1
+
                     if (isDraggingOutside)
                     {
-                        equipmentManager.SaveItemsBeforeDropping(itemToBeDropped);
+                        Debug.Log("Entered isDraggingOutside block");  // New Debug Line 2
 
-                        // Before creating a dropped item instance, save the stored items
-                        SaveStoredItemsBeforeDropping(itemToBeDropped);
+                        // Debugging: Print the values before using them
+                        Debug.Log($"equipmentSlot.storageContainer: {equipmentSlot.storageContainer}");
+                        Debug.Log($"equipmentManager.tempStorage: {equipmentManager.tempStorage}");
+                        Debug.Log($"itemToBeDropped: {itemToBeDropped}");
 
-                        // Un-equip item first and check if it was successful
-                        bool unequipped = equipmentManager.UnequipItemInstance(itemToBeDropped);
-                        if (unequipped)
+                        Debug.Log("Checking itemToBeDropped and equipmentManager.tempStorage");  // New Debug Line 3
+
+                        if (itemToBeDropped != null && equipmentManager.tempStorage != null)
                         {
-                            // Then remove the item from inventory
-                            RemoveItemFromInventory(itemToBeDropped);
+                            Debug.Log("Entered itemToBeDropped and equipmentManager.tempStorage block");  // Existing Debug Line
+
+                            Debug.Log($"itemToBeDropped.MaxStorageSpace: {itemToBeDropped.MaxStorageSpace}");  // New Debug Line
+                            Debug.Log($"equipmentManager.tempStorage.ContainsKey(itemToBeDropped): {equipmentManager.tempStorage.ContainsKey(itemToBeDropped)}");  // New Debug Line
+                            Debug.Log("Keys in equipmentManager.tempStorage:");
+                            foreach (var key in equipmentManager.tempStorage.Keys)
+                            {
+                                Debug.Log(key);
+                            }
+                            if (itemToBeDropped.MaxStorageSpace > 0 && equipmentManager.tempStorage.ContainsKey(itemToBeDropped))
+                            {
+                                // Debugging: Print the value before using it
+                                Debug.Log($"equipmentManager.tempStorage[itemToBeDropped]: {equipmentManager.tempStorage[itemToBeDropped]}");
+
+                                equipmentSlot.storageContainer.SetItems(new List<Item>(equipmentManager.tempStorage[itemToBeDropped]));
+                                equipmentManager.tempStorage.Remove(itemToBeDropped);
+                            }
                         }
-                        if (itemToBeDropped.MaxStorageSpace > 0 && equipmentManager.tempStorage.ContainsKey(itemToBeDropped))
+                        else
                         {
-                            equipmentSlot.storageContainer.SetItems(new List<Item>(equipmentManager.tempStorage[itemToBeDropped]));
-                            equipmentManager.tempStorage.Remove(itemToBeDropped);
+                            Debug.LogError("Either itemToBeDropped or equipmentManager.tempStorage is null");
+                            Debug.Log("Did not enter innermost block");  // New Debug Line
+
                         }
                         // Create the dropped item instance
                         itemDropping.CreateDroppedItemInstance(itemToBeDropped, evt.mousePosition);
