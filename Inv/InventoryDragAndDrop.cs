@@ -114,7 +114,7 @@ public class InventoryDragAndDrop : MonoBehaviour
                 }
 
                 EquipmentDefinition itemToBeDropped = equipmentSlot.equippedItem;
-
+                Image slotIcon = currentSlot.Q<Image>();
 
                 if (slotIcon != null)
                 {
@@ -126,32 +126,47 @@ public class InventoryDragAndDrop : MonoBehaviour
                     Debug.Log("Dropped item: " + draggedItem.name);
                     if (isDraggingOutside)
                     {
+                        Debug.Log("Item to be dropped: " + itemToBeDropped.itemName);
+
                         // Before creating a dropped item instance, save the stored items
                         SaveStoredItemsBeforeDropping(itemToBeDropped);
 
-                        itemDropping.CreateDroppedItemInstance(itemToBeDropped, evt.mousePosition);
-                        RemoveItemFromInventory(itemToBeDropped);  // New method to remove the item from inventory
-
-                        // Update itemToBeDropped after removing it
-                        itemToBeDropped = equipmentSlot.equippedItem;
-
-                        if (itemToBeDropped != null)
+                        // Un-equip item first and check if it was successful
+                        bool unequipped = equipmentManager.UnequipItemInstance(itemToBeDropped);
+                        if (unequipped)
                         {
-                            equipmentManager.UnequipItemInstance(itemToBeDropped);
+                            // Then remove the item from inventory
+                            RemoveItemFromInventory(itemToBeDropped);
                         }
-                        else
+
+                        // Create the dropped item instance
+                        itemDropping.CreateDroppedItemInstance(itemToBeDropped, evt.mousePosition);
+
+                        // Explicitly update UI
+                        InventoryUI inventoryUI = FindObjectOfType<InventoryUI>();
+                        if (inventoryUI != null)
                         {
-                            Debug.LogWarning("itemToBeDropped is null in OnGlobalMouseUp.");
+                            inventoryUI.UpdateStorageDisplay();
                         }
                     }
+
+
+                    root.Remove(draggedItem);
+                    draggedItem = null;
+                    currentSlot = null;
                 }
+            }
+            else if (currentSlot.userData is Item)
+            {
+                Item item = (Item)currentSlot.userData;
+                // Handle drop logic for regular inventory items here...
             }
         }
     }
 
     private void RemoveItemFromInventory(EquipmentDefinition itemToBeDropped)
     {
-        // Call the method to remove the item from inventory
+        // Call the method to remove the item from inventory (this might need to be added to the EquipmentManager class)
         equipmentManager.RemoveItem(itemToBeDropped);
 
         // Update the UI to reflect the changes
@@ -161,7 +176,6 @@ public class InventoryDragAndDrop : MonoBehaviour
             inventoryUI.UpdateStorageDisplay();
         }
     }
-
 
 
     private void OnGlobalMouseMove(MouseMoveEvent evt)

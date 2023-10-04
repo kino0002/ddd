@@ -1,0 +1,75 @@
+.equipment_slot {
+    display: flex;
+    height: 100px;
+    width: 75px;
+    justify-content: center;
+    align-items: center;
+    background-color: #181818;
+}
+
+.equipment_slot.filled {
+    border-width: 1px;
+    border-color: #534141;
+    border-style: solid;    
+    background-color: #312525;
+}
+
+.equipment_slot_img {
+}
+
+.lable_text {
+    color: rgb(190, 190, 190);
+    -unity-font-definition: resource('FlatSkin/Font/Roboto-Black');
+    font-size: 25px;
+}
+
+.lable_text_money {
+    font-size: 25px;
+    color: rgb(190, 190, 190);
+    -unity-font-definition: resource('FlatSkin/Font/Roboto-Black');
+    flex-direction: row-reverse;
+    flex-grow: 1;
+}
+
+.StorageContainer {
+    display: flex; 
+    flex-direction: row;
+    justify-content: flex-start; 
+    align-items: flex-start;
+    margin-bottom: 16px;
+}
+
+.TinyEquipmentView {
+    min-width: 62px;
+    max-width: 62px;
+    height: 62px;
+    border-width: 1px;
+    border-color: #534141;
+    border-style: solid;    
+    background-color: #312525;
+    padding: 8px;
+    margin-right: 8px;
+}
+
+.ItemsGridContainer {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.ItemSlot {
+    width: 62px;
+    height: 62px;
+    background-color: #181818;
+    padding: 8px;
+}
+
+.ItemSlotWithItem {
+    width: 62px;
+    height: 62px;
+    border-width: 2px;
+    border-color: #474747;
+    border-style: solid;
+    background-color: #2F2F2F;
+    padding: 8px;
+}
+

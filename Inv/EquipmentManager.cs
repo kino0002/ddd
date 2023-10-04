@@ -110,18 +110,20 @@ public class EquipmentManager : MonoBehaviour
         return equipmentSlots;
     }
 
-    public void UnequipItemInstance(EquipmentDefinition equipmentInstance)
+    public bool UnequipItemInstance(EquipmentDefinition equipmentInstance)
     {
+        Debug.Log("Trying to unequip: " + equipmentInstance.itemName);
+
         if (equipmentInstance == null)
         {
             Debug.LogError("equipmentInstance is null in UnequipItemInstance.");
-            return;
+            return false;
         }
 
         if (equipmentSlots == null || !equipmentSlots.Any())
         {
             Debug.LogError("equipmentSlots is either null or empty.");
-            return;
+            return false;
         }
 
         EquipmentSlot slot = equipmentSlots.Find(slot => slot.equippedItem == equipmentInstance);
@@ -129,7 +131,7 @@ public class EquipmentManager : MonoBehaviour
         if (slot == null)
         {
             Debug.LogError($"No slot found containing {equipmentInstance.itemName}.");
-            return;
+            return false;
         }
 
         Debug.Log("Unequipping item: " + equipmentInstance.itemName);
@@ -146,6 +148,9 @@ public class EquipmentManager : MonoBehaviour
         {
             inventoryUI.UpdateStorageDisplay();
         }
+
+        Debug.Log("Equipment Slots: " + string.Join(", ", equipmentSlots.Select(s => s.equippedItem?.itemName ?? "null")));
+        return true;
     }
 
 
