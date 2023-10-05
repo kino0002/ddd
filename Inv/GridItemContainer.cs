@@ -20,13 +20,15 @@ public class GridSlot
     public int X { get; private set; }
     public int Y { get; private set; }
     public Item Item { get; private set; }
-    public int Width { get; private set; } = 1;
-    public int Height { get; private set; } = 1;
+    public int Width { get; set; }
+    public int Height { get; set; }
 
-    public GridSlot(int x, int y)
+    public GridSlot(int x, int y, int width = 1, int height = 1)
     {
         X = x;
         Y = y;
+        Width = width;
+        Height = height;
     }
 
     public bool IsOccupied()
@@ -48,15 +50,21 @@ public class GridSlot
     {
         Item = null;
     }
+
+    public void SetDimensions(int width, int height)
+    {
+        this.Width = width;
+        this.Height = height;
+    }
 }
 
 public class GridItemContainer
 {
-    private const int GridWidth = 5; // Fixed grid width
+    private const int GridWidth = 5;
     private int gridHeight;
     private GridSlot[,] grid;
     private List<Item> items;
-
+    public List<Item> Items => items;
     public GridItemContainer(EquipmentDefinition equipment)
     {
         int maxStorageSpace = equipment.MaxStorageSpace;
@@ -72,13 +80,34 @@ public class GridItemContainer
         items = new List<Item>();
     }
 
-    public GridSlot FindSlot(Item item)
+    public bool AddItem(Item item, int width = 1, int height = 1)
+    {
+        if (items.Count >= this.gridHeight * GridWidth)
+        {
+            Debug.Log("Container is full. Item not added.");
+            return false;
+        }
+
+        GridSlot slot = FindSlot(item, width, height);
+        if (slot != null)
+        {
+            slot.SetItem(item);
+            slot.SetDimensions(width, height);
+            items.Add(item);
+            Debug.Log($"Item added to container. Current count: {items.Count}");
+            return true;
+        }
+        Debug.Log("Failed to add item to container.");
+        return false;
+    }
+
+    public GridSlot FindSlot(Item item, int width, int height)
     {
         for (int x = 0; x < GridWidth; x++)
         {
             for (int y = 0; y < gridHeight; y++)
             {
-                if (grid[x, y].CanPlaceItem(item))
+                if (CanPlaceItem(x, y, width, height))
                 {
                     return grid[x, y];
                 }
@@ -87,23 +116,24 @@ public class GridItemContainer
         return null;
     }
 
-    public bool AddItem(Item item)
+    public bool CanPlaceItem(int startX, int startY, int width, int height)
     {
-        if (items.Count >= this.gridHeight * GridWidth)
+        if (startX + width > GridWidth || startY + height > gridHeight)
         {
-            Debug.Log("Container is full. Item not added.");
             return false;
         }
-        GridSlot slot = FindSlot(item);
-        if (slot != null)
+
+        for (int x = startX; x < startX + width; x++)
         {
-            slot.SetItem(item);
-            items.Add(item);
-            Debug.Log($"Item added to container. Current count: {items.Count}");
-            return true;
+            for (int y = startY; y < startY + height; y++)
+            {
+                if (grid[x, y].IsOccupied())
+                {
+                    return false;
+                }
+            }
         }
-        Debug.Log("Failed to add item to container.");
-        return false;
+        return true;
     }
 
     public bool RemoveItem(Item item)
@@ -142,6 +172,4 @@ public class GridItemContainer
     {
         return items;
     }
-
-    public List<Item> Items => items;
 }
