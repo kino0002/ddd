@@ -64,10 +64,8 @@ public class ItemPickup : MonoBehaviour
             {
                 HandleItemPickup(equipmentManager);
             }
-            equipmentManager.LoadItemsAfterPickingUp(item as EquipmentDefinition);
         }
     }
-
 
     private void HandleEquipmentPickup(EquipmentManager equipmentManager, EquipmentDefinition equipment)
     {

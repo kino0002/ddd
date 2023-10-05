@@ -17,7 +17,6 @@ public class EquipmentManager : MonoBehaviour
     private List<EquipmentSlot> equipmentSlots;
 
     public event Action<EquipmentDefinition, EquipmentSlotType> OnEquipmentChanged;
-    public Dictionary<EquipmentDefinition, List<Item>> tempStorage = new Dictionary<EquipmentDefinition, List<Item>>();
 
     private void Awake()
     {
@@ -113,7 +112,7 @@ public class EquipmentManager : MonoBehaviour
 
     public bool UnequipItemInstance(EquipmentDefinition equipmentInstance)
     {
-        Debug.Log("Trying to unequip: " + equipmentInstance?.itemName);
+        Debug.Log("Trying to unequip: " + equipmentInstance.itemName);
 
         if (equipmentInstance == null)
         {
@@ -141,11 +140,6 @@ public class EquipmentManager : MonoBehaviour
 
         if (equipmentInstance.MaxStorageSpace > 0)
         {
-            if (slot.storageContainer == null)
-            {
-                Debug.LogError("storageContainer is null.");
-                return false;
-            }
             slot.storageContainer = null;
         }
 
@@ -154,14 +148,11 @@ public class EquipmentManager : MonoBehaviour
         {
             inventoryUI.UpdateStorageDisplay();
         }
-        else
-        {
-            Debug.LogError("InventoryUI is null.");
-        }
 
         Debug.Log("Equipment Slots: " + string.Join(", ", equipmentSlots.Select(s => s.equippedItem?.itemName ?? "null")));
         return true;
     }
+
 
 
     public List<EquipmentSlot> GetStorageEquipments()
@@ -203,11 +194,10 @@ public class EquipmentManager : MonoBehaviour
             // Remove the item from the slot
             slot.equippedItem = null;
 
-            // Save items to temporary storage before removing the bag
-            if (itemToRemove.MaxStorageSpace > 0 && slot.storageContainer != null)
+            // If the item had storage space, clear the storage container
+            if (itemToRemove.MaxStorageSpace > 0)
             {
-                tempStorage[itemToRemove] = new List<Item>(slot.storageContainer.Items);
-                slot.storageContainer.Items.Clear(); // Clear the items from the bag's storage
+                slot.storageContainer = null;
             }
 
             // Log the final states
@@ -225,42 +215,5 @@ public class EquipmentManager : MonoBehaviour
             Debug.LogWarning($"Item {itemToRemove.itemName} not found in any slot.");
         }
     }
-
-    public void SaveItemsBeforeDropping(EquipmentDefinition itemToBeDropped)
-    {
-        EquipmentSlot slot = equipmentSlots.Find(s => s.equippedItem == itemToBeDropped);
-        if (slot != null && slot.storageContainer != null)
-        {
-            tempStorage[itemToBeDropped] = new List<Item>(slot.storageContainer.Items);
-        }
-        else
-        {
-            Debug.LogWarning("Either slot or storageContainer is null in SaveItemsBeforeDropping.");
-        }
-    }
-
-    public void LoadItemsAfterPickingUp(EquipmentDefinition pickedUpItem)
-    {
-        if (tempStorage.TryGetValue(pickedUpItem, out List<Item> storedItems))
-        {
-            EquipmentSlot slot = equipmentSlots.Find(s => s.equippedItem == pickedUpItem);
-            if (slot != null && slot.storageContainer != null)
-            {
-                slot.storageContainer.SetItems(storedItems);
-                tempStorage.Remove(pickedUpItem);
-            }
-            else
-            {
-                Debug.LogWarning("Either slot or storageContainer is null in LoadItemsAfterPickingUp.");
-            }
-        }
-        else
-        {
-            Debug.LogWarning("No items found in tempStorage for the picked-up item.");
-        }
-    }
-
-
-
 
 }

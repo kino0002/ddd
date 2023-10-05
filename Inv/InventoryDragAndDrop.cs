@@ -107,9 +107,9 @@ public class InventoryDragAndDrop : MonoBehaviour
                 EquipmentSlotType slotId = (EquipmentSlotType)currentSlot.userData;
                 EquipmentManager.EquipmentSlot equipmentSlot = equipmentManager.GetEquipmentSlot(slotId);
 
-                if (equipmentSlot == null || equipmentSlot.equippedItem == null)
+                if (equipmentSlot == null)
                 {
-                    Debug.LogError($"equipmentSlot or equippedItem is null for ID: {slotId}");
+                    Debug.LogError($"equipmentSlot is null for ID: {slotId}");
                     return;
                 }
 
@@ -123,45 +123,22 @@ public class InventoryDragAndDrop : MonoBehaviour
 
                 if (draggedItem != null)
                 {
-                    Debug.Log("Entered draggedItem != null block");  // New Debug Line 1
-
+                    Debug.Log("Dropped item: " + draggedItem.name);
                     if (isDraggingOutside)
                     {
-                        Debug.Log("Entered isDraggingOutside block");  // New Debug Line 2
+                        Debug.Log("Item to be dropped: " + itemToBeDropped.itemName);
 
-                        // Debugging: Print the values before using them
-                        Debug.Log($"equipmentSlot.storageContainer: {equipmentSlot.storageContainer}");
-                        Debug.Log($"equipmentManager.tempStorage: {equipmentManager.tempStorage}");
-                        Debug.Log($"itemToBeDropped: {itemToBeDropped}");
+                        // Before creating a dropped item instance, save the stored items
+                        SaveStoredItemsBeforeDropping(itemToBeDropped);
 
-                        Debug.Log("Checking itemToBeDropped and equipmentManager.tempStorage");  // New Debug Line 3
-
-                        if (itemToBeDropped != null && equipmentManager.tempStorage != null)
+                        // Un-equip item first and check if it was successful
+                        bool unequipped = equipmentManager.UnequipItemInstance(itemToBeDropped);
+                        if (unequipped)
                         {
-                            Debug.Log("Entered itemToBeDropped and equipmentManager.tempStorage block");  // Existing Debug Line
-
-                            Debug.Log($"itemToBeDropped.MaxStorageSpace: {itemToBeDropped.MaxStorageSpace}");  // New Debug Line
-                            Debug.Log($"equipmentManager.tempStorage.ContainsKey(itemToBeDropped): {equipmentManager.tempStorage.ContainsKey(itemToBeDropped)}");  // New Debug Line
-                            Debug.Log("Keys in equipmentManager.tempStorage:");
-                            foreach (var key in equipmentManager.tempStorage.Keys)
-                            {
-                                Debug.Log(key);
-                            }
-                            if (itemToBeDropped.MaxStorageSpace > 0 && equipmentManager.tempStorage.ContainsKey(itemToBeDropped))
-                            {
-                                // Debugging: Print the value before using it
-                                Debug.Log($"equipmentManager.tempStorage[itemToBeDropped]: {equipmentManager.tempStorage[itemToBeDropped]}");
-
-                                equipmentSlot.storageContainer.SetItems(new List<Item>(equipmentManager.tempStorage[itemToBeDropped]));
-                                equipmentManager.tempStorage.Remove(itemToBeDropped);
-                            }
+                            // Then remove the item from inventory
+                            RemoveItemFromInventory(itemToBeDropped);
                         }
-                        else
-                        {
-                            Debug.LogError("Either itemToBeDropped or equipmentManager.tempStorage is null");
-                            Debug.Log("Did not enter innermost block");  // New Debug Line
 
-                        }
                         // Create the dropped item instance
                         itemDropping.CreateDroppedItemInstance(itemToBeDropped, evt.mousePosition);
 

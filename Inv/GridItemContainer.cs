@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Linq;
 
 [System.Serializable]
 public class ItemStack
@@ -145,10 +144,4 @@ public class GridItemContainer
     }
 
     public List<Item> Items => items;
-
-    public void SetItems(List<Item> newItems)
-    {
-        this.items = newItems;
-    }
 }
-
