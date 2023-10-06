@@ -110,17 +110,44 @@ public class InventoryUI : MonoBehaviour
 
             for (int i = 0; i < maxStorageSpace; i++)
             {
-                if (i < items.Count)
-                {
-                    itemsGrid.Add(CreateItemSlot(items[i].Icon));
-                }
-                else
-                {
-                    itemsGrid.Add(CreateItemSlot());
-                }
+                // Get item and its dimensions
+                Item item = items[i];
+                int itemWidth = item.SlotDimension.Width;
+                int itemHeight = item.SlotDimension.Height;
+
+                // Create a slot with the item's dimensions
+                itemsGrid.Add(CreateItemSlot(item.Icon, itemWidth, itemHeight));
             }
             storageContainer.Add(itemsGrid);
             invScrollView.Add(storageContainer);
+        }
+    }
+
+
+    private bool CanItemFit(int row, int col, int width, int height)
+    {
+        for (int i = row; i < row + height; i++)
+        {
+            for (int j = col; j < col + width; j++)
+            {
+                if (i >= inventoryGrid.GetLength(0) || j >= inventoryGrid.GetLength(1) || inventoryGrid[i, j].IsOccupied)
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private void PlaceItemInGrid(int row, int col, Item item, int width, int height)
+    {
+        for (int i = row; i < row + height; i++)
+        {
+            for (int j = col; j < col + width; j++)
+            {
+                inventoryGrid[i, j].IsOccupied = true;
+                inventoryGrid[i, j].ItemInSlot = item;
+            }
         }
     }
 
@@ -174,10 +201,14 @@ public class InventoryUI : MonoBehaviour
         return grid;
     }
 
-    private VisualElement CreateItemSlot(Sprite icon = null)
+    private const int OneByOneSlotSize = 50;  // Size of a 1x1 slot in pixels, adjust as needed
+
+    private VisualElement CreateItemSlot(Sprite icon = null, int width = 1, int height = 1)
     {
         var slot = new VisualElement();
-        
+        slot.style.width = OneByOneSlotSize * width;
+        slot.style.height = OneByOneSlotSize * height;
+
         if (icon != null)
         {
             var image = new Image { sprite = icon };
@@ -190,6 +221,7 @@ public class InventoryUI : MonoBehaviour
         }
         return slot;
     }
+
 
     private class Slot
     {

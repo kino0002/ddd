@@ -82,12 +82,6 @@ public class GridItemContainer
 
     public bool AddItem(Item item, int width = 1, int height = 1)
     {
-        if (items.Count >= this.gridHeight * GridWidth)
-        {
-            Debug.Log("Container is full. Item not added.");
-            return false;
-        }
-
         GridSlot slot = FindSlot(item, width, height);
         if (slot != null)
         {
@@ -101,6 +95,7 @@ public class GridItemContainer
         return false;
     }
 
+    // Modified FindSlot method
     public GridSlot FindSlot(Item item, int width, int height)
     {
         for (int x = 0; x < GridWidth; x++)
@@ -116,6 +111,7 @@ public class GridItemContainer
         return null;
     }
 
+    // Modified CanPlaceItem method
     public bool CanPlaceItem(int startX, int startY, int width, int height)
     {
         if (startX + width > GridWidth || startY + height > gridHeight)
