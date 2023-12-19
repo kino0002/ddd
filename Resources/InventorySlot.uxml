@@ -1,7 +1,0 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:VisualElement class="InventorySlot" style="flex-grow: 1; background-color: rgb(24, 24, 24); align-items: center;">
-        <ui:VisualElement name="ItemIcon" class="ItemIcon" style="background-color: rgba(255, 255, 255, 0); width: 100%; aspect-ratio: 1; justify-content: flex-end; align-items: flex-start; height: 100%; padding-left: 5px; padding-right: 5px; padding-top: 5px; padding-bottom: 5px;">
-            <ui:Label name="ItemAmount" text="0" style="font-size: 10px; margin-bottom: 0; margin-top: 0; margin-right: 0; margin-left: 0; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; color: rgb(255, 255, 255);" />
-        </ui:VisualElement>
-    </ui:VisualElement>
-</ui:UXML>
